@@ -1,21 +1,34 @@
-const { MongoClient } = require("mongodb");
-require("dotenv").config(); // Load .env variables
+require("dotenv").config();
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8','8.8.4.4','1.1.1.1']);
+} catch (error){
+  
+}
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 
-const uri = process.env.MONGODB_URI; // Get MongoDB URI from .env
+const options = {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+};
+
 let client;
-
-const connectToDatabase = async () => {
+const connectToMongoDB = async () => {
   if (!client) {
-    client = new MongoClient(uri);
-    await client.connect();
-    console.log("Connected to MongoDB");
+    try {
+      client = await MongoClient.connect(uri, options);
+      console.log("Connected to MongoDB");
+    } catch (error) {
+      console.log(error);
+    }
   }
   return client;
 };
 
-const getConnectedClient = () => {
-  if (!client) throw new Error("Database not connected yet!");
-  return client;
-};
+const getConnectedClient = () => client;
 
-module.exports = { connectToDatabase, getConnectedClient };
+module.exports = { connectToMongoDB, getConnectedClient };

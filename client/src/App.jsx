@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import Todo from "./Todo";
-import "./styles.css";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [content, setContent] = useState("");
 
-  // Fetch todos from backend
   useEffect(() => {
     const getTodos = async () => {
       const res = await fetch("/api/todos");
@@ -16,7 +14,6 @@ export default function App() {
     getTodos();
   }, []);
 
-  // Create new todo
   const createNewTodo = async (e) => {
     e.preventDefault();
     if (content.length > 3) {
@@ -31,27 +28,29 @@ export default function App() {
     }
   };
 
+
   return (
     <main className="container">
       <h1 className="title">Awesome Todos</h1>
-
+      
       <form className="form" onSubmit={createNewTodo}>
-        <input
-          type="text"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+        <input 
+          type="text" 
+          value={content} 
+          onChange={(e) => setContent(e.target.value)} 
           placeholder="Enter a new todo..."
           className="form__input"
-          required
+          required 
         />
         <button type="submit">Create Todo</button>
       </form>
 
       <div className="todos">
-        {todos.length > 0 &&
+        {(todos.length > 0) &&
           todos.map((todo) => (
             <Todo todo={todo} setTodos={setTodos} key={todo._id} />
-          ))}
+          ))
+        }
       </div>
     </main>
   );
